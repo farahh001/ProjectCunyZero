@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'accounts',
+    'course',
 ]
 
 MIDDLEWARE = [
@@ -64,7 +65,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
+                'course.context_processors.provide_home_info',
+                'course.context_processors.provide_pending_approve',
             ],
         },
     },

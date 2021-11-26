@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block ExtraCss %}
+<style>
+    #showcase{
+        background: url("{% static 'images/showcase.jpg' %}") no-repeat;
+        background-size: 100%;
+        background-position: center;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #showcase .title{
+        font-size: 5rem;
+        font-weight: bolder;
+        color: #fff;
+        text-shadow: 0px 3px 5px black;
+    }
+</style>
+{% endblock ExtraCss %}
+
+
+{% block content %}
+
+
+    <section id="showcase" class="w-100 mb-5">
+        <h1 class="title">Explore your career</h1>
+    </section>
+
+
+    <section>
+        <div class="row">
+            <div class="row col">
+                <div class="text-center">
+                    <h3><a href="#" class="a_no_style">Top Students</a> </h3>
+                </div>
+                <div class="text-center">
+                    {% for student in top_students %}
+                        <div class="d-inline"><img src="{{student.get_image}}" alt="" class="img-size"></div>
+                    {% endfor %}
+                    {% comment %} <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div> {% endcomment %}
+                </div>
+            </div>
+            <div class="row col">
+                <div class="text-center">
+                    <h3><a href="#" class="a_no_style">High Rated Class</a> </h3>
+                </div>
+                <div class="text-center">
+                    {% for course in high_rated_courses %}
+                        <div class="d-inline"><img src="{{course.get_thumbnail}}" alt="" class="img-size"></div>
+                    {% endfor %}
+                    {% comment %} <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div> {% endcomment %}
+                </div>
+            </div>
+            <div class="row col">
+                <div class="text-center">
+                    <h3><a href="#" class="a_no_style">Low Rated Class</a> </h3>
+                </div>
+                <div class="text-center">
+                    {% for course in low_rated_courses %}
+                        <div class="d-inline"><img src="{{course.get_thumbnail}}" alt="" class="img-size"></div>
+                    {% endfor %}
+                    {% comment %} <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div>
+                    <div class="d-inline"><img src="{% static 'css/images/Student/white.png' %}" alt="" class="img-size"></div> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+{% endblock content %}
+
+{% block ExtraJs %}
+{% endblock ExtraJs %}

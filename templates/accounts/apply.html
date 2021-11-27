@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block ExtraCss %}
+
+{% endblock ExtraCss %}
+
+{% block content %}
+
+<section class="container mt-5">
+    <div class="card w-50 m-auto p-5">
+        <div class="text-center mb-2">
+            <h3>Apply Form</h3>
+        </div>
+        <form action="." method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="text-center mb-4">
+                <input type="text" name="first_name" placeholder="Enter First Name">
+                <input type="text" name="last_name" placeholder="Enter Last Name">
+            </div>
+            <div class="form-check mx-auto">
+                <input class="form-check-input" type="radio" name="role" id="role1" value="ins" checked>
+                <label class="form-check-label" for="role1">
+                    Apply For Instructor
+                </label>
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="role" id="role2" value="std">
+                <label class="form-check-label" for="role2">
+                    Apply For Student
+                </label>
+            </div>
+            <br>
+            <input type="file" name="document" required>
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block ExtraJs %}
+
+{% endblock ExtraJs %}

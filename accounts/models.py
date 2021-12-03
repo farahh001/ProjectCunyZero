@@ -39,6 +39,26 @@ class Profile(models.Model):
         except:
             return []
 
+    @property
+    def is_special_registration(self):
+        try:
+            current_timestamp = datetime.datetime.now().timestamp()
+            semesters = Semester.objects.filter(deactivated=False)
+            active_semester = [semester for semester in semesters if semester.is_active]
+            if active_semester:
+                active_semester = active_semester[0]
+
+            enrolled_classes = self.enrolled_classes.all()
+            deactive_enrolled_classes = [_class for _class in enrolled_classes if not _class.is_active]
+
+            special_period_timestamp = (active_semester.registration_period + datetime.timedelta(days=6)).timestamp()
+            if deactive_enrolled_classes:
+                if current_timestamp < special_period_timestamp:
+                    return True
+        except:
+            return []
+
+
 
     @property
     def get_enroll_requests(self):

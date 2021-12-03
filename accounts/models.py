@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from course.models import Class
+
+
 # Create your models here.
 ROLES = (
     ('ins', "Instructor"),
@@ -26,6 +29,7 @@ class Profile(models.Model):
         except:
             return ''
 
+
     @property
     def get_current_classes(self):
         try:
@@ -34,6 +38,34 @@ class Profile(models.Model):
             return active_enrolled_classes
         except:
             return []
+
+
+    @property
+    def get_enroll_requests(self):
+        requests = []
+        classes = Class.objects.filter(instructor__id = self.id)
+        print(classes)
+        for _class in classes:
+            for request in _class.enroll_requests.all():
+                requests.append(request)
+        return requests
+
+
+    @property
+    def get_gpa(self):
+        try:
+            total_gpa = 0
+            final_gpa = 0
+            # print(self.grades.all())
+            for grade in self.grades.all():
+                total_gpa += float(grade.GPA)
+            total_grades_given = len(self.grades.all())
+            if total_grades_given:
+                final_gpa = total_gpa/total_grades_given
+            # print(final_gpa)
+            return round(final_gpa,2)
+        except:
+            return 0
 
 
     @property

@@ -5,21 +5,6 @@ from tinymce import models as tinymce_models
 
 
 
-class Semester(models.Model):
-    # classes = models.ManyToManyField("course.Class", related_name="semester")
-    start_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
-
-    end_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
-    setup_period = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
-    
-    registration_period = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
-    running_period = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
-    grading_period = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
-    deactivated = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Semester #{self.id} {self.is_active}"
-
 
 
 class Class(models.Model):

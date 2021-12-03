@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from course.models import Class
+from course.models import Class, Semester
 
 
 # Create your models here.
@@ -29,17 +29,6 @@ class Profile(models.Model):
         except:
             return ''
 
-
-    @property
-    def get_current_classes(self):
-        try:
-            enrolled_classes = self.enrolled_classes.all()
-            active_enrolled_classes = [_class for _class in enrolled_classes if _class.is_active]
-            return active_enrolled_classes
-        except:
-            return []
-
-
     @property
     def get_enroll_requests(self):
         requests = []
@@ -49,7 +38,6 @@ class Profile(models.Model):
             for request in _class.enroll_requests.all():
                 requests.append(request)
         return requests
-
 
     @property
     def get_gpa(self):
@@ -67,7 +55,6 @@ class Profile(models.Model):
         except:
             return 0
 
-
     @property
     def get_warnings(self):
         try:
@@ -76,6 +63,14 @@ class Profile(models.Model):
             warnings = []
         return warnings
 
+    @property
+    def get_current_classes(self):
+        try:
+            enrolled_classes = self.enrolled_classes.all()
+            active_enrolled_classes = [_class for _class in enrolled_classes if _class.is_active]
+            return active_enrolled_classes
+        except:
+            return []
 
     @property
     def get_assigned_classes(self):
@@ -83,6 +78,25 @@ class Profile(models.Model):
             assigned_classes = self.assigned_classes.all()
             active_assigned_classes = [_class for _class in assigned_classes if _class.is_active]
             return active_assigned_classes
+        except:
+            return []
+
+    @property
+    def is_special_registration(self):
+        try:
+            current_timestamp = datetime.datetime.now().timestamp()
+            semesters = Semester.objects.filter(deactivated=False)
+            active_semester = [semester for semester in semesters if semester.is_active]
+            if active_semester:
+                active_semester = active_semester[0]
+
+            enrolled_classes = self.enrolled_classes.all()
+            deactive_enrolled_classes = [_class for _class in enrolled_classes if not _class.is_active]
+
+            special_period_timestamp = (active_semester.registration_period + datetime.timedelta(days=6)).timestamp()
+            if deactive_enrolled_classes:
+                if current_timestamp < special_period_timestamp:
+                    return True
         except:
             return []
 
@@ -98,8 +112,6 @@ class Profile(models.Model):
         if created:
             Profile.objects.create(user=instance)
         instance.profile.save()
-
-
 
 class Application(models.Model):
     first_name = models.CharField(max_length=150)

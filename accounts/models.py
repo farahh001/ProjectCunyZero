@@ -27,6 +27,34 @@ class Profile(models.Model):
             return ''
 
     @property
+    def get_current_classes(self):
+        try:
+            enrolled_classes = self.enrolled_classes.all()
+            active_enrolled_classes = [_class for _class in enrolled_classes if _class.is_active]
+            return active_enrolled_classes
+        except:
+            return []
+
+
+    @property
+    def get_warnings(self):
+        try:
+            warnings = self.warnings_revieved.filter(deactivated=False)
+        except:
+            warnings = []
+        return warnings
+
+
+    @property
+    def get_assigned_classes(self):
+        try:
+            assigned_classes = self.assigned_classes.all()
+            active_assigned_classes = [_class for _class in assigned_classes if _class.is_active]
+            return active_assigned_classes
+        except:
+            return []
+
+    @property
     def get_reviews(self):
         try:
             return self.reviews_given.all()

@@ -2,6 +2,9 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls.base import reverse
 from django.views.generic import View
+from course.models import Class
+
+
 # Create your views here.
 
 

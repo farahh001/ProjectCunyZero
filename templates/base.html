@@ -47,29 +47,29 @@
           <a class="nav-link px-5 active" aria-current="page" href="{% url 'course:HomeView' %}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-5" href="{% url 'course:AboutView' %}">About Course</a>
+          <a class="nav-link px-5" href="#">About Course</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-5" href="{% url 'accounts:ApplyView' %}">Apply</a>
+          <a class="nav-link px-5" href="#">Apply</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-5" href="{% url 'course:ContactView' %}">Contact</a>
+          <a class="nav-link px-5" href="#">Contact</a>
         </li>
         {% if request.user.is_authenticated %}
             <li class="nav-item">
-            <a class="nav-link px-5" href="{% url 'accounts:LogOutView' %}">LogOut</a>
+            <a class="nav-link px-5" href="#">LogOut</a>
             </li>
         {% else %}
             <li class="nav-item">
-            <a class="nav-link px-5" href="{% url 'accounts:SignUpView' %}">SignUp</a>
+            <a class="nav-link px-5" href="#">SignUp</a>
             </li>
             <li class="nav-item">
-            <a class="nav-link px-5" href="{% url 'accounts:LogInView' %}">Login</a>
+            <a class="nav-link px-5" href="#">Login</a>
             </li>
         {% endif %}
         {% if request.user.is_staff %}
             <li class="nav-item">
-            <a class="nav-link px-5" href="{% url 'course:AdminAreaView' %}">Admin Area</a>
+            <a class="nav-link px-5" href="#">Admin Area</a>
             </li>
         {% endif %}
 

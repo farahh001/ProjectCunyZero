@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.views.generic.base import View
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
+from .models import UserUniqueId
 
 
 from .models import Application
@@ -12,6 +13,22 @@ from .forms import SignUpForm
 
 
 # Create your views here.
+
+class HandleSignUp(View):
+    def get(self, request):
+        _uuid = request.session.get("user_uuid", None)
+        try:
+            user_uuid_instance = UserUniqueId.objects.get(uuid = _uuid, expired = False)
+        except:
+            user_uuid_instance = None
+        
+        if _uuid and user_uuid_instance:
+            form = SignUpForm()
+            context = {'form': form}
+            messages.success(request, "Please Continue Your SignUp.")
+            return render(request, 'accounts/signup.html', context)
+        else:
+            return render(request, 'accounts/uuid_signup.html')
 
 
 

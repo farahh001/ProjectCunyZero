@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block ExtraCss %}
+<style>
+    form ul{
+        list-style: none;
+    }
+</style>
+{% endblock ExtraCss %}
+
+{% block content %}
+
+<section class="container mt-5">
+    <div class="form-cont card text-center p-5">
+        <h1 class="lead fs-1 mb-5">SignUp</h1>
+        <form action="{% url 'accounts:SignUpWithUUID' %}" method="POST">
+            {% csrf_token %}
+            <input class="p-2 mb-4" type="text" name="uuid" placeholder="Enter Your UUID" required>
+            <br>
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block ExtraJs %}
+
+{% endblock ExtraJs %}

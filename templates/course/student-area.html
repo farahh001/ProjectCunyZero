@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block ExtraCss %}
+<style>
+    #showcase{
+        background: url("{% static 'images/admin-area.jpg' %}") no-repeat;
+        background-size: 100%;
+        background-position: center;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #showcase .title{
+        font-size: 5rem;
+        font-weight: bolder;
+        color: #fff;
+        text-shadow: 0px 3px 5px black;
+    }
+    .pending-table{
+        min-width: 300px;
+    }
+</style>
+{% endblock ExtraCss %}
+
+
+{% block content %}
+
+
+    <section id="showcase" class="w-100 mb-5">
+        <h1 class="title">Student Area</h1>
+    </section>
+
+    <section class="mx-5">
+        <div class="row">
+            {% if request.user.profile.is_special_registration %}
+                <h3 class="text-success mb-3 lead">Special Registration For You</h3>
+            {% endif %}
+            <div class="col">
+                <h2 class="text-center">Current Classes</h2>
+                <table class="table table-striped table-dark pending-table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Timing</th>
+                        <th scope="col">Drop</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for class in request.user.profile.get_current_classes %}
+                        <tr>
+                            <th scope="row">{{class.id}}</th>
+                            <td><a href="{% url 'course:CourseDetailView' %}?id={{class.id}}">{{class.title}}</a></td>
+                            <td>{{class.start_time}}-{{class.end_time}}</td>
+                            <td>
+                                {% if active_semester.get_status == "Registration" or request.user.profile.is_special_registration %}
+                                    <form action="{% url 'course:ManageClassView' %}" method="POST" class="mb-2">
+                                        {% csrf_token %}
+                                        <input type="hidden" value="{{class.id}}" name="class_id">
+                                        <input type="hidden" value="drop" name="action">
+                                        <input type="submit" value="Drop" class="btn btn-sm btn-warning">
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <h2 class="text-center">Available Classes</h2>
+                <table class="table table-striped table-dark pending-table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Timing</th>
+                        <th scope="col">Enroll</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for class in available_classes %}
+                        <tr>
+                            <th scope="row">{{class.id}}</th>
+                            <td><a href="{% url 'course:CourseDetailView' %}?id={{class.id}}">{{class.title}}</a></td>
+                            <td>{{class.start_time}}-{{class.end_time}}</td>
+                            <td>
+                            {% if active_semester.get_status == "Registration" or request.user.profile.is_special_registration %}
+                                <form action="{% url 'course:ManageClassView' %}" method="POST" class="mb-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{class.id}}" name="class_id">
+                                    <input type="hidden" value="enroll" name="action">
+                                    <input type="submit" value="Enroll" class="btn btn-sm btn-success">
+                                </form>
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="mx-5 mt-5">
+        <div class="text-center">
+            <form action="" method="POST" class="mb-2 d-inline">
+                {% csrf_token %}
+                <input type="submit" value="Apply For Graduation" class="btn btn-lg btn-warning">
+            </form>
+            {% comment %} <a href="#" class="btn btn-lg btn-primary">Your Reviews</a> {% endcomment %}
+            <a href="{% url 'course:ManageComplainView' %}" class="btn btn-lg btn-danger">Complain</a>
+        </div>
+    </section>
+
+
+
+{% endblock content %}
+
+{% block ExtraJs %}
+{% endblock ExtraJs %}

@@ -30,3 +30,14 @@ class AdminAreaView(View):
         class_form = ClassForm(request.POST)
         # semester_form = SemesterForm()
         context = {"pending_instructors": pending_instructors, "pending_students": pending_students, "class_form": class_form}
+
+class StudentAreaView(View):
+    def get(self, request):
+        profile = request.user.profile
+        if not profile.role == "std":
+            return HttpResponseRedirect(reverse("course:HomeView"))
+        enrolled_class_ids = [_class.id for _class in profile.get_current_classes]
+        available_classes = Class.objects.filter(~Q(id__in=enrolled_class_ids))
+        available_classes = [_class for _class in available_classes if _class.is_active]
+        context = {"available_classes": available_classes}
+        return render(request, 'course/student-area.html', context)

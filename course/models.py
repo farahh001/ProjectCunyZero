@@ -33,6 +33,36 @@ class Semester(models.Model):
             raise ValidationError('Grading period should be greater than Running period.')
         return True
 
+    def get_status(self):
+        current_timestamp = datetime.datetime.now().timestamp()
+
+        if not self.is_active:
+            return "Ended"
+        
+        if current_timestamp > self.start_date.timestamp() and current_timestamp < self.setup_period.timestamp():
+            return "Setup"
+        elif current_timestamp > self.setup_period.timestamp() and current_timestamp < self.registration_period.timestamp():
+            return "Registration"
+        elif current_timestamp > self.registration_period.timestamp() and current_timestamp < self.running_period.timestamp():
+            return "Running"
+        elif current_timestamp > self.running_period.timestamp() and current_timestamp < self.grading_period.timestamp():
+            return "Grading"
+        elif current_timestamp > self.grading_period.timestamp() and current_timestamp < self.end_date.timestamp():
+            return "Grading_Ended"
+        return None
+
+    @property
+    def get_classes(self):
+        classes = self.classes.filter(cancelled=False)
+        return classes
+
+    @property
+    def is_active(self):
+        if not self.deactivated:
+            if not datetime.datetime.now().timestamp() > self.end_date.timestamp():
+                return True
+        return False
+
     
 
 

@@ -24,4 +24,9 @@ class AdminAreaView(View):
     def get(self, request):
         if not request.user.is_staff:
             return HttpResponseRedirect(reverse("course:HomeView"))
-        return render(request, 'course/admin-area.html')
+        
+        pending_students = Application.objects.filter(role="std", approved=False, rejected=False)
+        pending_instructors = Application.objects.filter(role="ins", approved=False, rejected=False)
+        class_form = ClassForm(request.POST)
+        # semester_form = SemesterForm()
+        context = {"pending_instructors": pending_instructors, "pending_students": pending_students, "class_form": class_form}

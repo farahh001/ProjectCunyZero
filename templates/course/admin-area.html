@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block ExtraCss %}
 <style>
     #showcase{
-        background: url("{% static 'images/showcase.jpg' %}") no-repeat;
+        background: url("{% static 'images/admin-area.jpg' %}") no-repeat;
         background-size: 100%;
         background-position: center;
 
@@ -22,6 +23,26 @@
     .pending-table{
         min-width: 300px;
     }
+    .active-semester{
+        border: 2px solid rgba(80, 186, 52, 0.8);
+        border-radius: 10px;
+        background-color: rgba(89, 235, 52, 0.3);
+        height: 350px;
+    }
+    .add-class-btn{
+        height: 50px;
+        width: 100%;
+        background-color: #ffc300d6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        color: #fff;
+        cursor: pointer;
+    }
+    .table-active{
+        background-color: rgba(89, 235, 52, 0.3);
+    }
 </style>
 {% endblock ExtraCss %}
 
@@ -34,80 +55,229 @@
     </section>
 
     <section class="mx-5">
-    <div class="row">
-        <div class="col">
-            <h2 class="text-center">Pending Instructors</h2>
-            <table class="table table-striped table-dark pending-table">
-                <thead>
-                    <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for application in pending_instructors %}
-                    <tr>
-                        <th scope="row">{{application.id}}</th>
-                        <td>{{application.first_name}}</td>
-                        <td>{{application.last_name}}</td>
-                        <td>
-                            <form action="{% url 'accounts:ManageApplicationView' %}" method="POST" class="mb-2">
-                                {% csrf_token %}
-                                <input type="hidden" value="{{application.id}}" name="application_id">
-                                <input type="hidden" value="approve" name="action">
-                                <input type="submit" value="Approve" class="btn btn-sm btn-success">
-                            </form>
-                            <form action="{% url 'accounts:ManageApplicationView' %}" method="POST">
-                                {% csrf_token %}
-                                <input type="hidden" value="{{application.id}}" name="application_id">
-                                <input type="hidden" value="reject" name="action">
-                                <input type="submit" value="Reject" class="btn btn-sm btn-danger">
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Pending Instructors</h2>
+                <table class="table table-striped table-dark pending-table">a
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">First</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">Document</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for application in pending_instructors %}
+                        <tr>
+                            <th scope="row">{{application.id}}</th>
+                            <td>{{application.first_name}}</td>
+                            <td>{{application.last_name}}</td>
+                            <td>
+                                <a href="{% url 'accounts:DownloadFileView' %}?file={{application.document.name}}">Download</a>
+                            </td>
+                            <td>
+                                <form action="{% url 'accounts:ManageApplicationView' %}" method="POST" class="mb-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{application.id}}" name="application_id">
+                                    <input type="hidden" value="approve" name="action">
+                                    <input type="submit" value="Approve" class="btn btn-sm btn-success">
+                                </form>
+                                <form action="{% url 'accounts:ManageApplicationView' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{application.id}}" name="application_id">
+                                    <input type="hidden" value="reject" name="action">
+                                    <input type="submit" value="Reject" class="btn btn-sm btn-danger">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <h2 class="text-center">Pending Students</h2>
+                <table class="table table-striped table-dark pending-table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">First</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">Document</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for application in pending_students %}
+                        <tr>
+                            <th scope="row">{{application.id}}</th>
+                            <td>{{application.first_name}}</td>
+                            <td>{{application.last_name}}</td>
+                            <td>
+                                <a href="{% url 'accounts:DownloadFileView' %}?file={{application.document.name}}">Download</a>
+                            </td>
+                            <td>
+                                <form action="{% url 'accounts:ManageApplicationView' %}" method="POST" class="mb-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{application.id}}" name="application_id">
+                                    <input type="hidden" value="approve" name="action">
+                                    <input type="submit" value="Approve" class="btn btn-sm btn-success">
+                                </form>
+                                <form action="{% url 'accounts:ManageApplicationView' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{application.id}}" name="application_id">
+                                    <input type="hidden" value="reject" name="action">
+                                    <input type="submit" value="Reject" class="btn btn-sm btn-danger">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="col">
-            <h2 class="text-center">Pending Students</h2>
-            <table class="table table-striped table-dark pending-table">
-                <thead>
-                    <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for application in pending_students %}
-                    <tr>
-                        <th scope="row">{{application.id}}</th>
-                        <td>{{application.first_name}}</td>
-                        <td>{{application.last_name}}</td>
-                        <td>
-                            <form action="{% url 'accounts:ManageApplicationView' %}" method="POST" class="mb-2">
-                                {% csrf_token %}
-                                <input type="hidden" value="{{application.id}}" name="application_id">
-                                <input type="hidden" value="approve" name="action">
-                                <input type="submit" value="Approve" class="btn btn-sm btn-success">
-                            </form>
-                            <form action="{% url 'accounts:ManageApplicationView' %}" method="POST">
-                                {% csrf_token %}
-                                <input type="hidden" value="{{application.id}}" name="application_id">
-                                <input type="hidden" value="reject" name="action">
-                                <input type="submit" value="Reject" class="btn btn-sm btn-danger">
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+    </section>
+
+
+    <section class="container mt-5">
+        <div class="">
+            <h1>Class Setup</h1>
+            <br>
+
+            {% if active_semester %}
+                <div class="active-semester">
+                    <div class="p-5">
+                        <h3 class="text-light fs-2 lead mb-3" style="text-shadow: 0px 0px 3px rgba(0,0,0,0.8);">
+                        {% if active_semester.get_status == "Setup" %}
+                            Semester is in Setup Period
+                        {% elif active_semester.get_status == "Registration" %}
+                            Semester is in Registration Period
+                        {% elif active_semester.get_status == "Running" %}
+                            Semester is Running
+                        {% elif active_semester.get_status == "Grading" %}
+                            Semester is in Grading Period
+                        {% else %}
+                            There's an active Semester.
+                        {% endif %}
+                            
+                        </h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Start Date</th>
+                                    <th scope="col">End Date</th>
+                                    <th scope="col">Setup Date</th>
+                                    <th scope="col">Registration Period</th>
+                                    <th scope="col">Running Period</th>
+                                    <th scope="col">Grading Period</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">{{active_semester.id}}</th>
+                                    <td>{{active_semester.start_date}}</td>
+                                    <td>{{active_semester.end_date}}</td>
+                                    <td>{{active_semester.setup_period}}</td>
+                                    <td>{{active_semester.registration_period}}</td>
+                                    <td>{{active_semester.running_period}}</td>
+                                    <td>{{active_semester.grading_period}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#deactivate-semester-form">Deactivate</button>
+
+                        <div class="modal fade" id="deactivate-semester-form" tabindex="-1" aria-labelledby="deactivate-semester-form" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-dark" id="deactivate-semester-form-label">Are You Sure!</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-dark">
+                                        <form action="{% url 'course:DeavtivateSemesterView' %}" method="POST" class="mb-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" value="{{active_semester.id}}" name="semester_id">
+                                            <input type="submit" value="Deactivate" class="btn btn-sm btn-danger">
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {% include "template-parts/semester-form.html" %}
+            {% endif %}
+
+            <section class="mt-5">
+                <h5>Semester Classes:</h5>
+                <br>
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Instructor</th>
+                            <th scope="col">Schedule</th>
+                            <th scope="col">Timing</th>
+                            <th scope="col">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for class in active_semester.get_classes %}
+                                <tr class="{% if class.currently_active %} table-active {% endif %}">
+                                    <th scope="row">{{class.id}}</th>
+                                    <td style="max-width: 200px;">{{class.title}}</td>
+                                    <td>{{class.instructor}}</td>
+                                    <td>{{class.start_date}}-{{class.end_date}}</td>
+                                    <td>{{class.start_time}} to {{class.end_time}}</td>
+                                    <td>
+                                    {% if active_semester.get_status == "Setup" %}
+                                        <form action="{% url 'course:RemoveClassView' %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="class_id" value="{{class.id}}">
+                                            <input type="hidden" name="semester_id" value="{{active_semester.id}}">
+                                            <input type="submit" value="Remove" class="btn btn-sm btn-danger">
+                                        </form>
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if active_semester.get_status == "Setup" %}
+                        <div class="add-class-btn" data-bs-toggle="modal" data-bs-target="#add-class-form">
+                            +
+                        </div>
+
+                        <div class="modal fade" id="add-class-form" tabindex="-1" aria-labelledby="add-class-form" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title text-dark" id="add-class-form-label">Add Class Form</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-dark">
+                                        {% include "template-parts/class-form.html" %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+            {% comment %} {{class_form|crispy}} {% endcomment %}
         </div>
-    </div>
     </section>
 
 

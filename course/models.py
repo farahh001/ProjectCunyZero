@@ -1,5 +1,7 @@
 from django.db import models
 from tinymce import models as tinymce_models
+from django.core.exceptions import ValidationError
+import datetime
 
 # Create your models here.
 
@@ -19,6 +21,19 @@ class Semester(models.Model):
 
     def __str__(self):
         return f"Semester #{self.id} {self.is_active}"
+
+    def clean(self):
+        if self.start_date > self.end_date:
+            raise ValidationError('End date should be greater than start date.')
+        if self.setup_period > self.registration_period:
+            raise ValidationError('Registration period should be greater than setup period.')
+        elif self.registration_period > self.running_period:
+            raise ValidationError('Running period should be greater than registration period.')
+        elif self.running_period > self.grading_period:
+            raise ValidationError('Grading period should be greater than Running period.')
+        return True
+
+    
 
 
 

@@ -10,4 +10,6 @@ urlpatterns = [
     path('signup/', views.SignUpView.as_view(), name="SignUpView"),
     path('apply/', views.ApplyView.as_view(), name="ApplyView"),
     path('manage-application/', views.ManageApplicationView.as_view(), name="ManageApplicationView"),
+    path('manage-uuid/', views.SignUpWithUUID.as_view(), name="SignUpWithUUID"),
+    path('new-signup/', views.SignUpView.as_view(), name="SignUpView"),
 ]

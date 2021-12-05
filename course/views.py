@@ -107,3 +107,15 @@ class RemoveClassView(View):
         
         messages.success(request, f"Class Removed")
         return HttpResponseRedirect(reverse("course:AdminAreaView")) 
+
+class AdminWarningView(View):
+    def get(self, request):
+        if not request.user.is_staff:
+            return HttpResponseRedirect(reverse("course:HomeView"))
+
+        students = Profile.objects.filter(role="std")
+        instructors = Profile.objects.filter(role="ins")
+        recieved_warnings = Warning.objects.filter(deactivated = False)
+        
+        context = {"recieved_warnings": recieved_warnings, "students": students, "instructors": instructors}
+        return render(request, 'course/admin-warnings.html', context)

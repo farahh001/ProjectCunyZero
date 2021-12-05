@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block ExtraCss %}
+<style>
+    #showcase{
+        background: url("{% static 'images/admin-area.jpg' %}") no-repeat;
+        background-size: 100%;
+        background-position: center;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #showcase .title{
+        font-size: 5rem;
+        font-weight: bolder;
+        color: #fff;
+        text-shadow: 0px 3px 5px black;
+    }
+    .pending-table{
+        min-width: 300px;
+    }
+</style>
+{% endblock ExtraCss %}
+
+
+{% block content %}
+
+
+    <section id="showcase" class="w-100 mb-5">
+        <h1 class="title">Instructor Area</h1>
+    </section>
+
+    <section class="mx-5">
+        <div class="row">
+            <div class="col">
+            <section class="mt-5">
+                <h5>Assigned Classes:</h5>
+                <br>
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Instructor</th>
+                            <th scope="col">Schedule</th>
+                            <th scope="col">Timing</th>
+                            <th scope="col">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for class in request.user.profile.get_assigned_classes %}
+                                <tr class="{% if class.currently_active %} table-active {% endif %}">
+                                    <th scope="row">{{class.id}}</th>
+                                    <td style="max-width: 200px;"><a href="{% url 'course:InstructorCourseDetailView' %}?id={{class.id}}">{{class.title}}</a></td>
+                                    <td>{{class.instructor}}</td>
+                                    <td>{{class.start_date}}-{{class.end_date}}</td>
+                                    <td>{{class.start_time}} to {{class.end_time}}</td>
+                                    <td>
+                                        <form action="{% url 'course:RemoveClassView' %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="class_id" value="{{class.id}}">
+                                            <input type="hidden" name="semester_id" value="{{active_semester.id}}">
+                                            <input type="submit" value="Remove" class="btn btn-sm btn-danger">
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="mx-5 mt-5">
+        <div class="text-center">
+            <a href="{% url 'course:ManageComplainView' %}" class="btn btn-lg btn-danger">Complain</a>
+        </div>
+    </section>
+
+
+
+{% endblock content %}
+
+{% block ExtraJs %}
+{% endblock ExtraJs %}

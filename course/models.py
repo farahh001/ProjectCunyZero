@@ -182,3 +182,11 @@ class Course(models.Model):
             for request in _class.enroll_requests.all():
                 requests.append(request)
         return requests
+
+class Warning(models.Model):
+    message = models.CharField(max_length=500)
+    reason = models.CharField(max_length=200)
+    semester = models.ForeignKey("course.Semester", on_delete=models.CASCADE, related_name="warnings_issued", null=True, blank=True)
+    profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="warnings_revieved")
+    date = models.DateTimeField(auto_now_add=True)
+    deactivated = models.BooleanField(default=False)

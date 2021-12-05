@@ -190,3 +190,12 @@ class Warning(models.Model):
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="warnings_revieved")
     date = models.DateTimeField(auto_now_add=True)
     deactivated = models.BooleanField(default=False)
+
+class Complain(models.Model):
+    message = models.CharField(max_length=500)
+    by_profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="complains_made")
+    for_profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="complains_revieved")
+    action_taken = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+

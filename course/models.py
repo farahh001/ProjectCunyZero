@@ -13,7 +13,7 @@ class Semester(models.Model):
 
     end_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
     setup_period = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
-    
+
     registration_period = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
     running_period = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
     grading_period = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
@@ -38,7 +38,7 @@ class Semester(models.Model):
 
         if not self.is_active:
             return "Ended"
-        
+
         if current_timestamp > self.start_date.timestamp() and current_timestamp < self.setup_period.timestamp():
             return "Setup"
         elif current_timestamp > self.setup_period.timestamp() and current_timestamp < self.registration_period.timestamp():
@@ -63,7 +63,8 @@ class Semester(models.Model):
                 return True
         return False
 
-    
+
+
 
 
 
@@ -90,6 +91,72 @@ class Class(models.Model):
             return self.thumbnail.url
         except:
             return ''
+
+    @property
+    def currently_active(self):
+        if self.cancelled:
+            return False
+        class_end_date = f"{self.end_date}".split('-')
+        class_end_date_timestamp = datetime.datetime(int(class_end_date[0]), int(class_end_date[1]), int(class_end_date[2]))
+        if not datetime.datetime.now().timestamp() > class_end_date_timestamp.timestamp():
+            current_timestamp = datetime.datetime.now().timestamp()
+            current_date = datetime.datetime.now().date()
+            current_date = f"{current_date}".split('-')
+            class_end_time = f"{self.end_time}".split(':')
+            class_end_timestamp = datetime.datetime(int(current_date[0]), int(current_date[1]), int(current_date[2]), int(class_end_time[0]),int(class_end_time[1])).timestamp()
+            class_start_time = f"{self.start_time}".split(':')
+            class_start_timestamp = datetime.datetime(int(current_date[0]), int(current_date[1]), int(current_date[2]), int(class_start_time[0]),int(class_start_time[1])).timestamp()
+
+            if current_timestamp > class_start_timestamp and current_timestamp < class_end_timestamp:
+                return True
+        return False
+
+
+    @property
+    def is_active(self):
+        if not self.cancelled and self.semester.is_active:
+            class_end_date = f"{self.end_date}".split('-')
+            class_end_date_timestamp = datetime.datetime(int(class_end_date[0]), int(class_end_date[1]), int(class_end_date[2]))
+            if not datetime.datetime.now().timestamp() > class_end_date_timestamp.timestamp():
+                return True
+        return False
+
+
+    @property
+    def get_stars(self):
+        stars = 0
+        reviews = self.reviews.all()
+        for review in reviews:
+            stars += int(review.stars)
+        try:
+            overall_star = int(int(stars)/int(len(reviews)))
+        except ZeroDivisionError:
+            overall_star = 0
+        return overall_star
+
+
+    @property
+    def get_reviews(self):
+        try:
+            return self.reviews.all()
+        except:
+            return []
+
+    @property
+    def get_rating(self):
+        try:
+            total_rating = 0
+            final_rating = 0
+            for review in self.reviews.all():
+                total_rating += int(review.stars)
+            total_reviews_recieved = len(self.reviews.all())
+            if total_reviews_recieved:
+                final_rating = total_rating/total_reviews_recieved
+            return round(final_rating,2)
+        except:
+            return 0
+
+
 
 
 

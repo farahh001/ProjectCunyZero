@@ -121,6 +121,12 @@ class Profile(models.Model):
         instance.profile.save()
 
 
+class Grade(models.Model):
+    GPA = models.FloatField(default=0.00)
+    by_instructor = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="given_grades")
+    to_student = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="grades")
+    refferring_class = models.ForeignKey("course.Class", on_delete=models.CASCADE, related_name="given_grades")
+    
 
 class Application(models.Model):
     first_name = models.CharField(max_length=150)

@@ -24,7 +24,7 @@ class AdminAreaView(View):
     def get(self, request):
         if not request.user.is_staff:
             return HttpResponseRedirect(reverse("course:HomeView"))
-        
+
         pending_students = Application.objects.filter(role="std", approved=False, rejected=False)
         pending_instructors = Application.objects.filter(role="ins", approved=False, rejected=False)
         class_form = ClassForm(request.POST)
@@ -41,3 +41,11 @@ class StudentAreaView(View):
         available_classes = [_class for _class in available_classes if _class.is_active]
         context = {"available_classes": available_classes}
         return render(request, 'course/student-area.html', context)
+
+
+class InstructorAreaView(View):
+    def get(self, request):
+        profile = request.user.profile
+        if not profile.role == "ins":
+            return HttpResponseRedirect(reverse("course:HomeView"))
+        return render(request, 'course/instructor-area.html')

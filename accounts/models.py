@@ -126,7 +126,7 @@ class Grade(models.Model):
     by_instructor = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="given_grades")
     to_student = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="grades")
     refferring_class = models.ForeignKey("course.Class", on_delete=models.CASCADE, related_name="given_grades")
-    
+
 
 class Application(models.Model):
     first_name = models.CharField(max_length=150)
@@ -136,7 +136,7 @@ class Application(models.Model):
     approved = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
 
-# class UserUniqueId(models.Model):
-#     uuid = models.CharField(max_length=500, null=False)
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="unique_id", null=True, blank=True)
-#     expired = models.BooleanField(default=False)
+class UserUniqueId(models.Model):
+    uuid = models.CharField(max_length=500, null=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="unique_id", null=True, blank=True)
+    expired = models.BooleanField(default=False)

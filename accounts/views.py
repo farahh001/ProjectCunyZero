@@ -11,44 +11,41 @@ import uuid
 import mimetypes
 import os
 from django.conf import settings
-from .models import Application
+from .models import Application, UserUniqueId
 from .forms import SignUpForm
-
 
 
 # Create your views here.
 
 class HandleSignUp(View):
-    # def get(self, request):
-    #     _uuid = request.session.get("user_uuid", None)
-    #     try:
-    #         user_uuid_instance = UserUniqueId.objects.get(uuid = _uuid, expired = False)
-    #     except:
-    #         user_uuid_instance = None
-        
-    #     if _uuid and user_uuid_instance:
-    #         form = SignUpForm()
-    #         context = {'form': form}
-    #         messages.success(request, "Please Continue Your SignUp.")
-    #         return render(request, 'accounts/signup.html', context)
-    #     else:
-    #         return render(request, 'accounts/uuid_signup.html')
-    pass
+    def get(self, request):
+        _uuid = request.session.get("user_uuid", None)
+        try:
+            user_uuid_instance = UserUniqueId.objects.get(uuid = _uuid, expired = False)
+        except:
+            user_uuid_instance = None
+
+        if _uuid and user_uuid_instance:
+            form = SignUpForm()
+            context = {'form': form}
+            messages.success(request, "Please Continue Your SignUp.")
+            return render(request, 'accounts/signup.html', context)
+        else:
+            return render(request, 'accounts/uuid_signup.html')
+
 
 class SignUpWithUUID(View):
 
-    # def post(self, request):
-    #     _uuid = request.POST.get('uuid', None)
-    #     if _uuid:
-    #         # form.save()
-    #         user_uuid_instance = get_object_or_404(UserUniqueId, uuid = _uuid)
-    #         # user_uuid_instance.expired = True
-    #         # user_uuid_instance.save()
-    #         request.session["user_uuid"] = user_uuid_instance.uuid
-    #         return HttpResponseRedirect(reverse("accounts:HandleSignUp"))
-    #     raise Http404()
-    pass
-
+    def post(self, request):
+        _uuid = request.POST.get('uuid', None)
+        if _uuid:
+            # form.save()
+            user_uuid_instance = get_object_or_404(UserUniqueId, uuid = _uuid)
+            # user_uuid_instance.expired = True
+            # user_uuid_instance.save()
+            request.session["user_uuid"] = user_uuid_instance.uuid
+            return HttpResponseRedirect(reverse("accounts:HandleSignUp"))
+        raise Http404()
 
 
 class SignUpView(View):
@@ -57,42 +54,43 @@ class SignUpView(View):
     #     context = {'form': form}
     #     return render(request, 'accounts/signup.html', context)
 
-    # def post(self, request):
-    #     _uuid = request.session.get("user_uuid", None)
+    def post(self, request):
+        _uuid = request.session.get("user_uuid", None)
 
-    #     try:
-    #         user_uuid_instance = UserUniqueId.objects.get(uuid = _uuid, expired = False)
-    #     except:
-    #         user_uuid_instance = None
+        try:
+            user_uuid_instance = UserUniqueId.objects.get(uuid = _uuid, expired = False)
+        except:
+            user_uuid_instance = None
 
-    #     if not _uuid or not user_uuid_instance:
-    #         raise ValidationError("UUID is incorrect")
+        if not _uuid or not user_uuid_instance:
+            raise ValidationError("UUID is incorrect")
 
-    #     form = SignUpForm(request.POST, request.FILES)
-    #     if form.is_valid():
-    #         # form.save()
-    #         user = form.save()
-    #         user.refresh_from_db()
+        form = SignUpForm(request.POST, request.FILES)
+        if form.is_valid():
+            # form.save()
+            user = form.save()
+            user.refresh_from_db()
 
-    #         user.first_name = user_uuid_instance.application.first_name
-    #         user.last_name = user_uuid_instance.application.last_name
-    #         user.profile.image = form.cleaned_data.get('image')
-    #         user.profile.role = user_uuid_instance.application.role
+            user.first_name = user_uuid_instance.application.first_name
+            user.last_name = user_uuid_instance.application.last_name
+            user.profile.image = form.cleaned_data.get('image')
+            user.profile.role = user_uuid_instance.application.role
 
-    #         user.profile.save()
-    #         user.save()
+            user.profile.save()
+            user.save()
 
-    #         user_uuid_instance.user = user
-    #         user_uuid_instance.expired = True
-    #         user_uuid_instance.save()
+            user_uuid_instance.user = user
+            user_uuid_instance.expired = True
+            user_uuid_instance.save()
 
-    #         request.session.flush()
+            request.session.flush()
 
-    #         login(request, user)
-    #         return HttpResponseRedirect(reverse("course:HomeView"))
-    #     context = {'form': form}
-    #     return render(request, 'accounts/signup.html', context)
-    pass
+            login(request, user)
+            return HttpResponseRedirect(reverse("course:HomeView"))
+        context = {'form': form}
+        return render(request, 'accounts/signup.html', context)
+
+
 
 
 class LogOutView(View):
@@ -134,7 +132,7 @@ class ApplyView(View):
         role = request.POST.get('role', None)
         first_name = request.POST.get('first_name', None)
         last_name = request.POST.get('last_name', None)
-        
+
         if document and role:
             Application.objects.create(
                 first_name = first_name,
@@ -146,7 +144,7 @@ class ApplyView(View):
             return HttpResponseRedirect(reverse("course:HomeView"))
         messages.error(request, "Application form is not correct.")
         return render(request, 'accounts/apply.html')
-    
+
 class ManageApplicationView(View):
 
     def post(self, request):
@@ -164,4 +162,3 @@ class ManageApplicationView(View):
 
         messages.success(request, f"Application has been {action}")
         return HttpResponseRedirect(reverse("course:AdminAreaView"))
-

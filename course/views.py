@@ -37,6 +37,32 @@ class AdminAreaView(View):
         # semester_form = SemesterForm()
         context = {"pending_instructors": pending_instructors, "pending_students": pending_students, "class_form": class_form}
 
+
+class AdminComplainView(View):
+    def get(self, request):
+        if not request.user.is_staff:
+            return HttpResponseRedirect(reverse("course:HomeView"))
+
+        recieved_complains = Complain.objects.filter(action_taken = False)
+
+        context = {"recieved_complains": recieved_complains}
+        return render(request, 'course/admin-complains.html', context)
+
+
+class AdminWarningView(View):
+    def get(self, request):
+        if not request.user.is_staff:
+            return HttpResponseRedirect(reverse("course:HomeView"))
+
+        students = Profile.objects.filter(role="std")
+        instructors = Profile.objects.filter(role="ins")
+        recieved_warnings = Warning.objects.filter(deactivated = False)
+
+        context = {"recieved_warnings": recieved_warnings, "students": students, "instructors": instructors}
+        return render(request, 'course/admin-warnings.html', context)
+
+
+
 class StudentAreaView(View):
     def get(self, request):
         profile = request.user.profile
@@ -71,7 +97,7 @@ class ManageClassView(View):
             cart, created = ShoppingCart.objects.get_or_create(user=request.user.profile)
             cart.courses.add(class_instance)
             messages.success(request, "Class added to the cart.")
-            
+
             # if not class_instance.quota <= len(class_instance.enrolled_by.all()):
             #     if not len(request.user.profile.get_current_classes) >= 4:
             #         conflict = False
@@ -98,38 +124,17 @@ class RemoveClassView(View):
     def post(self, request):
         semester_id = request.POST.get('semester_id', None)
         class_id = request.POST.get('class_id', None)
-        
+
         class_instance = get_object_or_404(Class, id=class_id)
         class_instance.delete()
         # semester_instance = get_object_or_404(Semester, id=semester_id)
         # semester_instance.classes.remove(class_instance)
         # semester_instance.save()
-        
+
         messages.success(request, f"Class Removed")
-        return HttpResponseRedirect(reverse("course:AdminAreaView")) 
-
-class AdminComplainView(View):
-    def get(self, request):
-        if not request.user.is_staff:
-            return HttpResponseRedirect(reverse("course:HomeView"))
-        
-        recieved_complains = Complain.objects.filter(action_taken = False)
-        
-        context = {"recieved_complains": recieved_complains}
-        return render(request, 'course/admin-complains.html', context)
+        return HttpResponseRedirect(reverse("course:AdminAreaView"))
 
 
-class AdminWarningView(View):
-    def get(self, request):
-        if not request.user.is_staff:
-            return HttpResponseRedirect(reverse("course:HomeView"))
-
-        students = Profile.objects.filter(role="std")
-        instructors = Profile.objects.filter(role="ins")
-        recieved_warnings = Warning.objects.filter(deactivated = False)
-        
-        context = {"recieved_warnings": recieved_warnings, "students": students, "instructors": instructors}
-        return render(request, 'course/admin-warnings.html', context)
 
 class ManageComplainView(View):
     def get(self, request):
@@ -177,7 +182,7 @@ class ManageComplainView(View):
             messages.success(request, "Complain Submited Successfully")
 
         return HttpResponseRedirect(reverse("course:HomeView"))
-    
+
 class ManageWarningView(View):
     def post(self, request):
         if not request.user.is_staff:
@@ -225,3 +230,12 @@ class ManageWarningView(View):
 
         return HttpResponseRedirect(reverse("course:AdminWarningView"))
 
+class DeavtivateSemesterView(View):
+    def post(self, request):
+        print(request.POST)
+        semester_id = request.POST.get('semester_id', None)
+        semester = get_object_or_404(Semester, id = semester_id)
+        semester.deactivated = True
+        semester.save()
+        messages.success(request, "Semester has been deactivated.")
+        return HttpResponseRedirect(reverse("course:AdminAreaView"))

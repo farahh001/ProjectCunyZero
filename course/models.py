@@ -8,7 +8,7 @@ import datetime
 
 
 class Semester(models.Model):
-    # classes = models.ManyToManyField("course.Class", related_name="semester")
+    classes = models.ManyToManyField("course.Class", related_name="semester")
     start_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
 
     end_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
@@ -157,31 +157,35 @@ class Class(models.Model):
             return 0
 
 
+class Review(models.Model):
+    STARS = (
+        (1, 'One'),
+        (2, 'Two'),
+        (3, 'Three'),
+        (4, 'Four'),
+        (5, 'Five'),
+    )
+    refferring_class = models.ForeignKey("course.Class", on_delete=models.CASCADE, related_name="reviews")
+    by_profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="reviews_given")
+    body = models.TextField()
+    stars = models.CharField(max_length=2, choices=STARS)
+    date_created = models.DateField(auto_now_add=True)
+
+    def get_stars(self):
+        return int(self.stars)
 
 
+class ShoppingCart(models.Model):
+    user = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="carts", unique=True)
+    courses = models.ManyToManyField("course.Class")
 
 
+class TabooWord(models.Model):
+    word = models.CharField(max_length=150)
 
-class Course(models.Model):
-    title = models.CharField(max_length=250)
-    description = models.TextField()
-    thumbnail = models.ImageField(upload_to='thumbnails/')
+    def __str__(self):
+        return f"{self.word}"
 
-    def get_thumbnail(self):
-        try:
-            return self.thumbnail.url
-        except:
-            return ''
-
-    @property
-    def get_enroll_requests(self):
-        requests = []
-        classes = Class.objects.filter(instructor__id = self.id)
-        print(classes)
-        for _class in classes:
-            for request in _class.enroll_requests.all():
-                requests.append(request)
-        return requests
 
 class Warning(models.Model):
     message = models.CharField(max_length=500)
@@ -199,3 +203,17 @@ class Complain(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 
+class ClassRequest(models.Model):
+    semester = models.ForeignKey("course.Semester", on_delete=models.CASCADE)
+    course = models.ForeignKey("course.Class", on_delete=models.CASCADE, related_name="enroll_requests")
+    user = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="enroll_requests")
+
+    def __str__(self):
+        return f"{self.user.user.username} request for {self.course.title} in semester #{self.semester.id}"
+
+
+
+class LabelOfHonor(models.Model):
+    semester = models.ForeignKey("course.Semester", on_delete=models.CASCADE)
+    user = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="honor_labels")
+    expired = models.BooleanField(default=False)

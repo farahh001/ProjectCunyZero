@@ -136,7 +136,7 @@ class Application(models.Model):
     approved = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
 
-# class UserUniqueId(models.Model):
-#     uuid = models.CharField(max_length=500, null=False)
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="unique_id", null=True, blank=True)
-#     expired = models.BooleanField(default=False)
+class UserUniqueId(models.Model):
+    uuid = models.CharField(max_length=500, null=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="unique_id", null=True, blank=True)
+    expired = models.BooleanField(default=False)

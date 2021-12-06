@@ -7,7 +7,7 @@ from django.urls.base import reverse
 from django.views.generic import View
 from accounts.models import Application, Grade, Profile
 #from course.forms import ClassForm, SemesterForm
-from course.models import Class, Warning, Complain
+from course.models import Class
 import datetime
 #from course.utils import time_to_timestamp
 
@@ -108,17 +108,6 @@ class RemoveClassView(View):
         messages.success(request, f"Class Removed")
         return HttpResponseRedirect(reverse("course:AdminAreaView")) 
 
-class AdminComplainView(View):
-    def get(self, request):
-        if not request.user.is_staff:
-            return HttpResponseRedirect(reverse("course:HomeView"))
-        
-        recieved_complains = Complain.objects.filter(action_taken = False)
-        
-        context = {"recieved_complains": recieved_complains}
-        return render(request, 'course/admin-complains.html', context)
-
-
 class AdminWarningView(View):
     def get(self, request):
         if not request.user.is_staff:
@@ -130,98 +119,3 @@ class AdminWarningView(View):
         
         context = {"recieved_warnings": recieved_warnings, "students": students, "instructors": instructors}
         return render(request, 'course/admin-warnings.html', context)
-
-class ManageComplainView(View):
-    def get(self, request):
-        # if not request.user.is_staff:
-        #     return HttpResponseRedirect(reverse("course:HomeView"))
-
-        students = Profile.objects.filter(role="std")
-        instructors = Profile.objects.filter(role="ins")
-        context = {"students": students, "instructors": instructors}
-        return render(request, 'course/complain.html', context)
-
-    def post(self, request):
-        # if not request.user.is_staff:
-        #     return HttpResponseRedirect(reverse("course:HomeView"))
-
-        complained_instructor = request.POST.get("complained_instructor", None)
-        complained_user = request.POST.get("complained_user", None)
-        complain_message = request.POST.get("complain_message", None)
-        complain_id = request.POST.get("complain_id", None)
-        action = request.POST.get("action", None)
-        for_user = None
-        print(action)
-
-        if action == "resolved":
-            complain = get_object_or_404(Complain, id = complain_id)
-            complain.action_taken = True
-            complain.save()
-            messages.success(request, "Complain resolved successfully")
-            return HttpResponseRedirect(reverse("course:AdminComplainView"))
-        elif action == "create":
-            if complained_instructor and complained_user:
-                messages.error(request, "Select only student or instructor at a time!")
-                return HttpResponseRedirect(reverse("course:ManageComplainView"))
-
-            if complained_user:
-                for_user = get_object_or_404(User, username = complained_user)
-            elif complained_instructor:
-                for_user = get_object_or_404(User, username = complained_instructor)
-
-            Complain.objects.create(
-                message = complain_message,
-                by_profile = request.user.profile,
-                for_profile = for_user.profile
-            )
-            messages.success(request, "Complain Submited Successfully")
-
-        return HttpResponseRedirect(reverse("course:HomeView"))
-    
-class ManageWarningView(View):
-    def post(self, request):
-        if not request.user.is_staff:
-            return HttpResponseRedirect(reverse("course:HomeView"))
-
-        warning_instructor = request.POST.get("warning_instructor", None)
-        warning_user = request.POST.get("warning_user", None)
-        warning_message = request.POST.get("warning_message", None)
-        warning_reason = request.POST.get("warning_reason", None)
-        warning_id = request.POST.get("warning_id", None)
-        action = request.POST.get("action", None)
-        for_user = None
-        print(action)
-
-        if action == "delete":
-            warning = get_object_or_404(Warning, id = warning_id)
-            warning.deactivated = True
-            warning.save()
-            messages.success(request, "Warning Removed Successfully.")
-        if action == "issue":
-            if warning_instructor and warning_user:
-                messages.error(request, "Select only student or instructor at a time!")
-                return HttpResponseRedirect(reverse("course:ManageComplainView"))
-
-            if warning_user:
-                for_user = get_object_or_404(User, username = warning_user)
-            elif warning_instructor:
-                for_user = get_object_or_404(User, username = warning_instructor)
-
-            semesters = Semester.objects.filter(deactivated=False)
-            active_semester = [semester for semester in semesters if semester.is_active]
-            if active_semester:
-                active_semester = active_semester[0]
-            else:
-                active_semester = None
-
-            Warning.objects.create(
-                profile = for_user.profile,
-                message = warning_message,
-                reason = warning_reason,
-                semester = active_semester,
-            )
-
-            messages.success(request, "Warning Issued Successfully")
-
-        return HttpResponseRedirect(reverse("course:AdminWarningView"))
-

@@ -178,6 +178,15 @@ class ShoppingCart(models.Model):
     courses = models.ManyToManyField("course.Class")
 
 
+class ClassRequest(models.Model):
+    semester = models.ForeignKey("course.Semester", on_delete=models.CASCADE)
+    course = models.ForeignKey("course.Class", on_delete=models.CASCADE, related_name="enroll_requests")
+    user = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="enroll_requests")
+
+    def __str__(self):
+        return f"{self.user.user.username} request for {self.course.title} in semester #{self.semester.id}"
+
+
 
 
 class Warning(models.Model):

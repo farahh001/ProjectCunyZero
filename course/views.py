@@ -268,3 +268,10 @@ class EnrollRequestView(View):
             
         return HttpResponseRedirect(reverse("course:StudentCartView"))
 
+class CourseDetailView(View):
+    def get(self, request):
+        class_id = request.GET.get("id", None)
+        _class = get_object_or_404(Class, id=class_id)
+        context = {"class": _class}
+        return render(request, "course/course-detail.html", context)
+

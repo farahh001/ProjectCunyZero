@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin-warning/', views.AdminWarningView.as_view(), name="AdminWarningView"),
     path('student-area/', views.StudentAreaView.as_view(), name="StudentAreaView"),
     path('instructor-area/', views.InstructorAreaView.as_view(), name="InstructorAreaView"),
-        path('manage-complain/', views.ManageComplainView.as_view(), name="ManageComplainView"),
+    path('manage-complain/', views.ManageComplainView.as_view(), name="ManageComplainView"),
     path('manage-warning/', views.ManageWarningView.as_view(), name="ManageWarningView"),
+    path('enroll-requests/', views.EnrollRequestView.as_view(), name="EnrollRequestView"),
 ]

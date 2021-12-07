@@ -6,10 +6,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.base import reverse
 from django.views.generic import View
 from accounts.models import Application, Grade, Profile
-#from course.forms import ClassForm, SemesterForm
-from course.models import Class, Warning, Complain
+from course.forms import ClassForm, SemesterForm
+from course.models import Class, ClassRequest, Complain, Review, Semester, ShoppingCart, TabooWord, Warning
 import datetime
-#from course.utils import time_to_timestamp
+from course.utils import time_to_timestamp
 
 # Create your views here.
 
@@ -224,4 +224,47 @@ class ManageWarningView(View):
             messages.success(request, "Warning Issued Successfully")
 
         return HttpResponseRedirect(reverse("course:AdminWarningView"))
+
+class EnrollRequestView(View):
+    def get(self, request):
+        if not request.user.profile.role == "ins":
+            return HttpResponseRedirect(reverse("course:HomeView"))
+        return render(request, "course/enroll-requests.html")
+
+    def post(self, request):
+        request_id = request.POST.get('request_id', None)
+        action = request.POST.get('action', None)
+        request_instance = get_object_or_404(ClassRequest, id=request_id)
+
+        if action == "reject":
+            request_instance.delete()
+            messages.success(request, "Request Deleted")
+        elif action == "accept":
+            class_instance = request_instance.course
+            profile = request_instance.user
+            cart, created = ShoppingCart.objects.get_or_create(user=profile)
+            
+            if not class_instance.quota <= len(class_instance.enrolled_by.all()):
+                if not len(profile.get_current_classes) >= 4:
+                    conflict = False
+                    for enrolled_class in profile.get_current_classes:
+                        start_time = time_to_timestamp(enrolled_class.start_time)
+                        end_time = time_to_timestamp(enrolled_class.end_time)
+                        new_start_time = time_to_timestamp(class_instance.start_time)
+                        new_end_time = time_to_timestamp(class_instance.end_time)
+                        if (start_time < new_end_time and new_start_time < end_time):
+                            conflict = True
+                    if not conflict:
+                        class_instance.enrolled_by.add(profile)
+                        class_instance.save()
+                        messages.success(request, "Request Accepted")
+                        cart.courses.remove(class_instance)
+                    else:
+                        messages.error(request, "There's a time conflict between classes of Student.")
+                else:
+                    messages.error(request, "Max Class Enroll Limit Reached By Student")
+            else:
+                messages.error(request, "Your Class is full.")
+            
+        return HttpResponseRedirect(reverse("course:StudentCartView"))
 

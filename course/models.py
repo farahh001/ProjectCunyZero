@@ -173,6 +173,11 @@ class Review(models.Model):
     def get_stars(self):
         return int(self.stars)
 
+class ShoppingCart(models.Model):
+    user = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="carts", unique=True)
+    courses = models.ManyToManyField("course.Class")
+
+
 
 
 class Warning(models.Model):

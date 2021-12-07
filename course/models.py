@@ -193,6 +193,11 @@ class TabooWord(models.Model):
     def __str__(self):
         return f"{self.word}"
 
+class LabelOfHonor(models.Model):
+    semester = models.ForeignKey("course.Semester", on_delete=models.CASCADE)
+    user = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="honor_labels")
+    expired = models.BooleanField(default=False)
+
 
 
 

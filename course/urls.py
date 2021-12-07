@@ -16,4 +16,7 @@ urlpatterns = [
     path('manage-warning/', views.ManageWarningView.as_view(), name="ManageWarningView"),
     path('enroll-requests/', views.EnrollRequestView.as_view(), name="EnrollRequestView"),
     path('class-detail/', views.CourseDetailView.as_view(), name="CourseDetailView"),
+    path('received-warnings/', views.ReceivedWarningsView.as_view(), name="ReceivedWarningsView"),
+    path('class-detail-instructor/', views.InstructorCourseDetailView.as_view(), name="InstructorCourseDetailView"),
+    path('manage-grade/', views.ManageGradeView.as_view(), name="ManageGradeView"),
 ]

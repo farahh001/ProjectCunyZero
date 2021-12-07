@@ -1,0 +1,55 @@
+<form action="{% url 'course:CreateSemesterView' %}" method="POST">
+    {% csrf_token %}
+    <h5>Semester Settings</h5>
+    <div class="row p-2">
+        <div class="col-6">
+            <label for="start-date" class="form-label">Start Date:</label>
+            <div>
+                <input type="date" name="start_date" id="start-date" class="form-control my-2 w-50" required>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <label for="end-date" class="form-label">End Date:</label>
+            <div>
+                <input type="date" name="end_date" id="end-date" class="form-control my-2 w-50" required>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-2">
+        <label for="setup-date" class="form-label">Setup Period End Date:</label>
+        <div>
+            <input type="date" name="setup_period_date" id="setup-date" class="form-control my-2 w-50" required>
+            <input type="time" name="setup_period_time" class="form-control my-2 w-50" required>
+        </div>
+    </div>
+
+    <div class="p-2">
+        <label for="registration-date" class="form-label">Registration Period End Date:</label>
+        <div>
+            <input type="date" name="registration_period_date" id="registration-date" class="form-control my-2 w-50" required>
+            <input type="time" name="registration_period_time" class="form-control my-2 w-50" required>
+        </div>
+    </div>
+
+    <div class="p-2">
+        <label for="running-date" class="form-label">Running Period End Date:</label>
+        <div>
+            <input type="date" name="running_period_date" id="running-date" class="form-control my-2 w-50" required>
+            <input type="time" name="running_period_time" class="form-control my-2 w-50" required>
+        </div>
+    </div>
+
+    <div class="p-2">
+        <label for="graduate-date" class="form-label">Graduation Period End Date:</label>
+        <div>
+            <input type="date" name="grading_period_date" id="graduate-date" class="form-control my-2 w-50" required>
+            <input type="time" name="grading_period_time" class="form-control my-2 w-50" required>
+        </div>
+    </div>
+
+    <div class="p-2">
+        <input type="submit" value="Create Semester" class="btn btn-primary">
+    </div>
+</form>

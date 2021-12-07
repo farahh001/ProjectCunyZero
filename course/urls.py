@@ -15,4 +15,5 @@ urlpatterns = [
     path('manage-complain/', views.ManageComplainView.as_view(), name="ManageComplainView"),
     path('manage-warning/', views.ManageWarningView.as_view(), name="ManageWarningView"),
     path('enroll-requests/', views.EnrollRequestView.as_view(), name="EnrollRequestView"),
+    path('class-detail/', views.CourseDetailView.as_view(), name="CourseDetailView"),
 ]

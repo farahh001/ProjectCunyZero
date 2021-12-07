@@ -93,6 +93,35 @@ class ManageClassView(View):
             # else:
             #     messages.error(request, "Class is full.")
         return HttpResponseRedirect(reverse("course:StudentAreaView"))
+class ManageGradeView(View):
+    def post(self, request):
+        rating = request.POST.get('rating', None)
+        student_id = request.POST.get('student_id', None)
+        class_id = request.POST.get('class_id', None)
+        instructor_id = request.POST.get('instructor_id', None)
+        _class = get_object_or_404(Class, id=class_id)
+        student = get_object_or_404(Profile, id=student_id)
+        instructor = get_object_or_404(Profile, id=instructor_id)
+
+        print(float(rating))
+
+        Grade.objects.create(
+            GPA = float(rating),
+            by_instructor = instructor,
+            to_student = student,
+            refferring_class = _class,
+        )
+
+        messages.success(request, "Grade Given Successfully")
+
+        return redirect(f"{reverse('course:InstructorCourseDetailView')}?id={_class.id}")
+
+class InstructorCourseDetailView(View):
+    def get(self, request):
+        class_id = request.GET.get("id", None)
+        _class = get_object_or_404(Class, id=class_id)
+        context = {"class": _class}
+        return render(request, "course/student-grading.html", context)
 
 class RemoveClassView(View):
     def post(self, request):
@@ -274,4 +303,9 @@ class CourseDetailView(View):
         _class = get_object_or_404(Class, id=class_id)
         context = {"class": _class}
         return render(request, "course/course-detail.html", context)
+
+class ReceivedWarningsView(View):
+    def get(self, request):
+
+        return render(request, 'course/received-warnings.html')
 

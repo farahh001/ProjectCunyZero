@@ -156,6 +156,23 @@ class Class(models.Model):
         except:
             return 0
 
+class Review(models.Model):
+    STARS = (
+        (1, 'One'),
+        (2, 'Two'),
+        (3, 'Three'),
+        (4, 'Four'),
+        (5, 'Five'),
+    )
+    refferring_class = models.ForeignKey("course.Class", on_delete=models.CASCADE, related_name="reviews")
+    by_profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="reviews_given")
+    body = models.TextField()
+    stars = models.CharField(max_length=2, choices=STARS)
+    date_created = models.DateField(auto_now_add=True)
+
+    def get_stars(self):
+        return int(self.stars)
+
 
 
 class Warning(models.Model):

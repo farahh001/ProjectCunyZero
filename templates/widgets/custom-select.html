@@ -1,0 +1,13 @@
+{% include "django/forms/widgets/input.html" %}
+
+<select class="form-select" name="classes" required="" id="id_classes" multiple="">
+    <option value="1">Class object (1)</option>
+</select>
+
+<script>
+  $(function () {
+    $("input[name='{{ widget.name }}']").datepicker({
+      format:'dd/mm/yyyy',
+    });
+  });
+</script>

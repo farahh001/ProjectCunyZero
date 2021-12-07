@@ -11,3 +11,8 @@ class ClassForm(ModelForm):
     class Meta:
         model = Class
         exclude = ['enrolled_by','start_date','end_date','start_time','end_time', 'semester', 'cancelled']
+
+class SemesterForm(ModelForm):
+    class Meta:
+        model = Semester
+        exclude = ['']

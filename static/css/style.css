@@ -207,7 +207,7 @@ li a:hover {
 footer {
     margin-top: 100px;
     text-align: center;
-    background-color: #20232e;
+    background-color: #8d9edb;
     padding: 60px 0px;
 }
 
@@ -215,7 +215,7 @@ footer ul.social-icons {
     padding: 0px 270px;
     margin-bottom: 60px;
     border-bottom: 1px solid rgba(250, 250, 250, 0.15);
-    background: blue;
+    background: rgb(49, 49, 105);
     overflow: hidden;
 }
 

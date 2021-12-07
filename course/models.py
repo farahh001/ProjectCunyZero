@@ -158,31 +158,6 @@ class Class(models.Model):
 
 
 
-
-
-
-
-class Course(models.Model):
-    title = models.CharField(max_length=250)
-    description = models.TextField()
-    thumbnail = models.ImageField(upload_to='thumbnails/')
-
-    def get_thumbnail(self):
-        try:
-            return self.thumbnail.url
-        except:
-            return ''
-
-    @property
-    def get_enroll_requests(self):
-        requests = []
-        classes = Class.objects.filter(instructor__id = self.id)
-        print(classes)
-        for _class in classes:
-            for request in _class.enroll_requests.all():
-                requests.append(request)
-        return requests
-
 class Warning(models.Model):
     message = models.CharField(max_length=500)
     reason = models.CharField(max_length=200)
@@ -197,5 +172,3 @@ class Complain(models.Model):
     for_profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="complains_revieved")
     action_taken = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
-
-

@@ -1,17 +1,27 @@
 from accounts.models import Profile
-from course.models import Course
+
+from course.models import Class, Semester
 from accounts.models import Application
+import operator
 
 
 def provide_home_info(request):
-    top_students = Profile.objects.all()[:6]
-    high_rated_courses = Course.objects.all()[:6]
-    low_rated_courses = Course.objects.all()[:6]
-    
-    return dict({"top_students": top_students, "high_rated_courses": high_rated_courses, "low_rated_courses": low_rated_courses})
+    students = Profile.objects.filter(role="std")
+    for student in students:
+        student.GPA = student.get_gpa
+        student.save()
+    top_students = students.order_by("-GPA")[:10]
 
+    courses = Class.objects.all()
+    for course in courses:
+        course.rating = course.get_rating
+        course.save()
+    high_rated_courses = courses.order_by("-rating")[:6]
+    low_rated_courses = courses.order_by("rating")[:6]
+
+    return dict({"top_students": top_students, "high_rated_courses": high_rated_courses, "low_rated_courses": low_rated_courses})
 def provide_pending_approve(request):
     pending_students = Application.objects.filter(role="std", approved=False, rejected=False)
     pending_instructors = Application.objects.filter(role="ins", approved=False, rejected=False)
-    
+
     return dict({"pending_instructors": pending_instructors, "pending_students": pending_students})

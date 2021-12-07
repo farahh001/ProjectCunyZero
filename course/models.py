@@ -187,6 +187,13 @@ class ClassRequest(models.Model):
         return f"{self.user.user.username} request for {self.course.title} in semester #{self.semester.id}"
 
 
+class TabooWord(models.Model):
+    word = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.word}"
+
+
 
 
 class Warning(models.Model):

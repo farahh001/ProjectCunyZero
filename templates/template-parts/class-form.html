@@ -1,0 +1,32 @@
+{% load crispy_forms_tags %}
+
+<form action="{% url 'course:CreateClassView' %}" method="POST" class="mb-2">
+    {% csrf_token %}
+    <input type="hidden" name="semester_id" value="{{active_semester.id}}">
+    <div class="row mb-3">
+        <div class="col-6">
+            <label for="start-date" class="form-label">Start Date:</label>
+            <div>
+                <input type="date" class="form-control" name="start_date" id="start-date" required>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <label for="end-date" class="form-label">End Date:</label>
+            <div>
+                <input type="date" class="form-control" name="end_date" id="end-date" required>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <p>Timing</p>
+        <div class="input-group mb-3">
+            <input type="time" name="start_time" id="start-time" class="form-control" required>
+            <span class="input-group-text">to</span>
+            <input type="time" name="end_time" id="end-time" class="form-control" required>
+        </div>
+    </div>
+    {{class_form|crispy}}
+    <br>
+    <input type="submit" value="Add Class" class="btn btn-success">
+</form>

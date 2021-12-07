@@ -3,6 +3,16 @@ body {
     overflow-x: hidden;
 }
 
+.circle-warning{
+    border-radius: 50%;
+    background-color: #f48840;
+    width: 25px; height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
 .logo-container {
     width: 300px;
     display: flex;
@@ -43,6 +53,9 @@ body {
 #main-header {
     overflow: hidden;
     padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 
@@ -186,12 +199,6 @@ li a:hover {
     margin: 2px;
 }
 
-.img-size {
-    width: 130px;
-    height: 130px;
-    margin: 9px 4px;
-}
-
 .nav-container {
     margin-left: 50Px;
     margin-right: 50px;
@@ -260,4 +267,48 @@ footer p a:hover {
 .a_no_style {
     text-decoration: none;
     color: inherit;
+}
+
+.top-students-section {
+    min-height: 80vh;
+    border: 1px solid rgba(22, 22, 22, 0.2);
+    border-radius: 5px;
+    background-color: rgb(255, 140, 45);
+}
+
+.top-students-section .top-students-img {
+    position: relative;
+    display: inline;
+    width: 20%;
+    min-width: 250px;
+    min-height: 300px;
+    margin: 10px;
+    margin-bottom: 50px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 0rem 2rem rgba(0, 0, 0, .8) !important;
+}
+
+.top-students-section .top-students-img .title {
+    position: absolute;
+    bottom: -50px;
+    left: 0%;
+    text-align: center;
+    width: 100%;
+    font-size: 2.5rem;
+    color: #fff;
+}
+
+.top-title {
+    font-size: 5rem;
+    font-weight: bolder;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.top-title span {
+    color: transparent;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: #fff;
 }

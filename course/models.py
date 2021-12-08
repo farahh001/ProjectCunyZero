@@ -8,7 +8,7 @@ import datetime
 
 
 class Semester(models.Model):
-    # classes = models.ManyToManyField("course.Class", related_name="semester")
+    classes = models.ManyToManyField("course.Class", related_name="semester")
     start_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
 
     end_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
@@ -69,7 +69,7 @@ class Semester(models.Model):
 
 
 class Class(models.Model):
-
+    # semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="classes")
     title = models.CharField(max_length=250)
     description = models.TextField()
     thumbnail = models.ImageField(upload_to='thumbnails/', null=True, blank=True, default="default.jpg")

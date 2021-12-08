@@ -71,7 +71,7 @@ class ManageClassView(View):
             cart, created = ShoppingCart.objects.get_or_create(user=request.user.profile)
             cart.courses.add(class_instance)
             messages.success(request, "Class added to the cart.")
-            
+
             # if not class_instance.quota <= len(class_instance.enrolled_by.all()):
             #     if not len(request.user.profile.get_current_classes) >= 4:
             #         conflict = False
@@ -93,6 +93,93 @@ class ManageClassView(View):
             # else:
             #     messages.error(request, "Class is full.")
         return HttpResponseRedirect(reverse("course:StudentAreaView"))
+
+class CreateSemesterView(View):
+    def post(self, request):
+
+        start_date = request.POST.get('start_date', '').split('-')
+        start_date = datetime.datetime(int(start_date[0]), int(start_date[1]), int(start_date[2])).date()
+
+        end_date = request.POST.get('end_date', '').split('-')
+        end_date = datetime.datetime(int(end_date[0]), int(end_date[1]), int(end_date[2])).date()
+
+        setup_period_date = request.POST['setup_period_date']
+        setup_period_time = request.POST['setup_period_time']
+
+        setup_period_date = request.POST.get('setup_period_date', '').split('-')
+        setup_period_time = request.POST.get('setup_period_time', '').split(':')
+
+        setup_period = datetime.datetime(
+                                int(setup_period_date[0]),
+                                int(setup_period_date[1]),
+                                int(setup_period_date[2]),
+                                int(setup_period_time[0]),
+                                int(setup_period_time[1])
+                            )
+
+        registration_period_date = request.POST['registration_period_date']
+        registration_period_time = request.POST['registration_period_time']
+
+        registration_period_date = request.POST.get('registration_period_date', '').split('-')
+        registration_period_time = request.POST.get('registration_period_time', '').split(':')
+
+        registration_period = datetime.datetime(
+                                int(registration_period_date[0]),
+                                int(registration_period_date[1]),
+                                int(registration_period_date[2]),
+                                int(registration_period_time[0]),
+                                int(registration_period_time[1])
+                            )
+
+        running_period_date = request.POST['running_period_date']
+        running_period_time = request.POST['running_period_time']
+
+        running_period_date = request.POST.get('running_period_date', '').split('-')
+        running_period_time = request.POST.get('running_period_time', '').split(':')
+
+        running_period = datetime.datetime(
+                                int(running_period_date[0]),
+                                int(running_period_date[1]),
+                                int(running_period_date[2]),
+                                int(running_period_time[0]),
+                                int(running_period_time[1])
+                            )
+
+        grading_period_date = request.POST['grading_period_date']
+        grading_period_time = request.POST['grading_period_time']
+
+        grading_period_date = request.POST.get('grading_period_date', '').split('-')
+        grading_period_time = request.POST.get('grading_period_time', '').split(':')
+
+        grading_period = datetime.datetime(
+                                int(grading_period_date[0]),
+                                int(grading_period_date[1]),
+                                int(grading_period_date[2]),
+                                int(grading_period_time[0]),
+                                int(grading_period_time[1])
+                            )
+
+        semester = Semester(
+            start_date = start_date,
+            end_date = end_date,
+            setup_period = setup_period,
+            registration_period = registration_period,
+            running_period = running_period,
+            grading_period = grading_period,
+        )
+
+        try:
+            semester.clean()
+        except Exception as e:
+            messages.error(request, e)
+            return HttpResponseRedirect(reverse("course:AdminAreaView"))
+
+        semester.save()
+        messages.success(request, "Semester Created Successfully.")
+        return HttpResponseRedirect(reverse("course:AdminAreaView"))
+
+
+
 class ManageGradeView(View):
     def post(self, request):
         rating = request.POST.get('rating', None)
@@ -116,6 +203,7 @@ class ManageGradeView(View):
 
         return redirect(f"{reverse('course:InstructorCourseDetailView')}?id={_class.id}")
 
+
 class InstructorCourseDetailView(View):
     def get(self, request):
         class_id = request.GET.get("id", None)
@@ -123,27 +211,30 @@ class InstructorCourseDetailView(View):
         context = {"class": _class}
         return render(request, "course/student-grading.html", context)
 
+
 class RemoveClassView(View):
     def post(self, request):
         semester_id = request.POST.get('semester_id', None)
         class_id = request.POST.get('class_id', None)
-        
+
         class_instance = get_object_or_404(Class, id=class_id)
         class_instance.delete()
         # semester_instance = get_object_or_404(Semester, id=semester_id)
         # semester_instance.classes.remove(class_instance)
         # semester_instance.save()
-        
+
         messages.success(request, f"Class Removed")
-        return HttpResponseRedirect(reverse("course:AdminAreaView")) 
+        return HttpResponseRedirect(reverse("course:AdminAreaView"))
+
+
 
 class AdminComplainView(View):
     def get(self, request):
         if not request.user.is_staff:
             return HttpResponseRedirect(reverse("course:HomeView"))
-        
+
         recieved_complains = Complain.objects.filter(action_taken = False)
-        
+
         context = {"recieved_complains": recieved_complains}
         return render(request, 'course/admin-complains.html', context)
 
@@ -156,9 +247,10 @@ class AdminWarningView(View):
         students = Profile.objects.filter(role="std")
         instructors = Profile.objects.filter(role="ins")
         recieved_warnings = Warning.objects.filter(deactivated = False)
-        
+
         context = {"recieved_warnings": recieved_warnings, "students": students, "instructors": instructors}
         return render(request, 'course/admin-warnings.html', context)
+
 
 class ManageComplainView(View):
     def get(self, request):
@@ -206,7 +298,8 @@ class ManageComplainView(View):
             messages.success(request, "Complain Submited Successfully")
 
         return HttpResponseRedirect(reverse("course:HomeView"))
-    
+
+
 class ManageWarningView(View):
     def post(self, request):
         if not request.user.is_staff:
@@ -272,7 +365,7 @@ class EnrollRequestView(View):
             class_instance = request_instance.course
             profile = request_instance.user
             cart, created = ShoppingCart.objects.get_or_create(user=profile)
-            
+
             if not class_instance.quota <= len(class_instance.enrolled_by.all()):
                 if not len(profile.get_current_classes) >= 4:
                     conflict = False
@@ -294,7 +387,7 @@ class EnrollRequestView(View):
                     messages.error(request, "Max Class Enroll Limit Reached By Student")
             else:
                 messages.error(request, "Your Class is full.")
-            
+
         return HttpResponseRedirect(reverse("course:StudentCartView"))
 
 class CourseDetailView(View):
@@ -308,4 +401,3 @@ class ReceivedWarningsView(View):
     def get(self, request):
 
         return render(request, 'course/received-warnings.html')
-

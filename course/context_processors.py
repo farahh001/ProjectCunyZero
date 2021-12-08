@@ -20,6 +20,15 @@ def provide_home_info(request):
     low_rated_courses = courses.order_by("rating")[:6]
 
     return dict({"top_students": top_students, "high_rated_courses": high_rated_courses, "low_rated_courses": low_rated_courses})
+
+def provide_active_semester(request):
+    semesters = Semester.objects.filter(deactivated=False)
+    active_semester = [semester for semester in semesters if semester.is_active]
+    if active_semester:
+        active_semester = active_semester[0]
+
+    return dict({"active_semester": active_semester})
+
 def provide_pending_approve(request):
     pending_students = Application.objects.filter(role="std", approved=False, rejected=False)
     pending_instructors = Application.objects.filter(role="ins", approved=False, rejected=False)

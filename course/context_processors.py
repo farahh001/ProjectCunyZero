@@ -1,5 +1,5 @@
 from accounts.models import Profile
-
+from django.utils.translation import deactivate
 from course.models import Class, Semester
 from accounts.models import Application
 import operator

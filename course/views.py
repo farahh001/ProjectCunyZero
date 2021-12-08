@@ -543,3 +543,68 @@ class ManageGradeView(View):
         messages.success(request, "Grade Given Successfully")
 
         return redirect(f"{reverse('course:InstructorCourseDetailView')}?id={_class.id}")
+
+
+class StudentCartView(View):
+    def get(self, request):
+        if not request.user.profile.role == "std":
+            return HttpResponseRedirect(reverse("course:HomeView"))
+        query = request.GET.get("q", None)
+        search_results = None
+        if query:
+            search_results = Class.objects.filter(Q(title__contains = query) | Q(description__contains = query))
+        cart = request.user.profile.carts.all().first()
+        context = {"cart": cart, "search_results": search_results, "query": query}
+        return render(request, "course/classes.html", context)
+
+    def post(self, request):
+        class_id = request.POST.get('class_id', None)
+        action = request.POST.get('action', None)
+        class_instance = get_object_or_404(Class, id=class_id)
+        cart, created = ShoppingCart.objects.get_or_create(user=request.user.profile)
+        if action == "delete":
+            cart.courses.remove(class_instance)
+            messages.success(request, "Class Dropped")
+        elif action == "enroll":
+            if not class_instance.quota <= len(class_instance.enrolled_by.all()):
+                if not len(request.user.profile.get_current_classes) >= 4:
+                    conflict = False
+                    for enrolled_class in request.user.profile.get_current_classes:
+                        start_time = time_to_timestamp(enrolled_class.start_time)
+                        end_time = time_to_timestamp(enrolled_class.end_time)
+                        new_start_time = time_to_timestamp(class_instance.start_time)
+                        new_end_time = time_to_timestamp(class_instance.end_time)
+                        if (start_time < new_end_time and new_start_time < end_time):
+                            conflict = True
+                    if not conflict:
+                        if request.user.profile.get_gpa >= 3:
+                            class_instance.enrolled_by.add(request.user.profile)
+                            class_instance.save()
+                            messages.success(request, "Class Enrolled")
+                            cart.courses.remove(class_instance)
+                        else:
+                            semesters = Semester.objects.filter(deactivated=False)
+                            active_semester = [semester for semester in semesters if semester.is_active]
+                            if active_semester:
+                                active_semester = active_semester[0]
+                            else:
+                                active_semester = None
+                                
+                            enroll_request, created = ClassRequest.objects.get_or_create(
+                                user = request.user.profile,
+                                semester = active_semester,
+                                course = class_instance
+                            )
+                            if not created:
+                                messages.info(request, "Your request has already been sent to the instructor.")
+                            else:
+                                messages.success(request, "Your request has been sent to the instructor.")
+                    else:
+                        messages.error(request, "There's a time conflict between classes.")
+                else:
+                    messages.error(request, "Max Class Enroll Limit Reached")
+            else:
+                messages.error(request, "Class is full.")
+            
+        return HttpResponseRedirect(reverse("course:StudentCartView"))
+    

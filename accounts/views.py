@@ -25,7 +25,7 @@ class HandleSignUp(View):
             user_uuid_instance = UserUniqueId.objects.get(uuid = _uuid, expired = False)
         except:
             user_uuid_instance = None
-        
+
         if _uuid and user_uuid_instance:
             form = SignUpForm()
             context = {'form': form}
@@ -131,7 +131,7 @@ class ApplyView(View):
         role = request.POST.get('role', None)
         first_name = request.POST.get('first_name', None)
         last_name = request.POST.get('last_name', None)
-        
+
         if document and role:
             Application.objects.create(
                 first_name = first_name,
@@ -143,7 +143,7 @@ class ApplyView(View):
             return HttpResponseRedirect(reverse("course:HomeView"))
         messages.error(request, "Application form is not correct.")
         return render(request, 'accounts/apply.html')
-    
+
 class ManageApplicationView(View):
 
     def post(self, request):
@@ -162,3 +162,15 @@ class ManageApplicationView(View):
         messages.success(request, f"Application has been {action}")
         return HttpResponseRedirect(reverse("course:AdminAreaView"))
 
+class DownloadFileView(View):
+    def get(self, request):
+        filename = request.GET.get('file', None)
+        filepath = f'{settings.BASE_DIR}/media/{filename}'
+        try:
+            with open(filepath, 'rb') as _file:
+                mime_type, _ = mimetypes.guess_type(filepath)
+                response = HttpResponse(_file, content_type=mime_type)
+                response['Content-Disposition'] = "attachment; filename=%s" % filename
+                return response
+        except FileNotFoundError:
+            raise Http404()

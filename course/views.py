@@ -179,6 +179,16 @@ class CreateSemesterView(View):
         return HttpResponseRedirect(reverse("course:AdminAreaView"))
 
 
+class DeavtivateSemesterView(View):
+    def post(self, request):
+        print(request.POST)
+        semester_id = request.POST.get('semester_id', None)
+        semester = get_object_or_404(Semester, id = semester_id)
+        semester.deactivated = True
+        semester.save()
+        messages.success(request, "Semester has been deactivated.")
+        return HttpResponseRedirect(reverse("course:AdminAreaView"))
+        
 
 class ManageGradeView(View):
     def post(self, request):

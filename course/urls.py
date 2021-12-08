@@ -18,7 +18,7 @@ urlpatterns = [
     path('class-detail/', views.CourseDetailView.as_view(), name="CourseDetailView"),
     path('create-semester/', views.CreateSemesterView.as_view(), name="CreateSemesterView"),
     path('deactivate-semester/', views.DeavtivateSemesterView.as_view(), name="DeavtivateSemesterView"),
-
+    path('create-class/', views.CreateClassView.as_view(), name="CreateClassView"),
     path('received-warnings/', views.ReceivedWarningsView.as_view(), name="ReceivedWarningsView"),
     path('class-detail-instructor/', views.InstructorCourseDetailView.as_view(), name="InstructorCourseDetailView"),
     path('manage-grade/', views.ManageGradeView.as_view(), name="ManageGradeView"),

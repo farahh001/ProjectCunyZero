@@ -188,7 +188,52 @@ class DeavtivateSemesterView(View):
         semester.save()
         messages.success(request, "Semester has been deactivated.")
         return HttpResponseRedirect(reverse("course:AdminAreaView"))
-        
+
+class CreateClassView(View):
+    def post(self, request):
+
+        semester_id = request.POST.get('semester_id', '')
+        semester = get_object_or_404(Semester, id = semester_id)
+
+        instructor = request.POST.get('instructor', '')
+        instructor = get_object_or_404(Profile, id = instructor)
+
+        start_date = request.POST.get('start_date', '').split('-')
+        start_date = datetime.datetime(int(start_date[0]), int(start_date[1]), int(start_date[2])).date()
+
+        end_date = request.POST.get('end_date', '').split('-')
+        end_date = datetime.datetime(int(end_date[0]), int(end_date[1]), int(end_date[2])).date()
+
+        start_time = request.POST.get('start_time', '').split(':')
+        start_time = datetime.time(int(start_time[0]), int(start_time[1]))
+
+        end_time = request.POST.get('end_time', '').split(':')
+        end_time = datetime.time(int(end_time[0]), int(end_time[1]))
+
+        title = request.POST.get('title', '')
+        description = request.POST.get('description', '')
+        instructions = request.POST.get('instructions', '')
+        quota = request.POST.get('quota', '')
+
+        _class = Class(
+            semester = semester,
+            title = title,
+            description = description,
+            instructions = instructions,
+            quota = quota,
+            instructor = instructor,
+            start_date = start_date,
+            end_date = end_date,
+            start_time = start_time,
+            end_time = end_time,
+        )
+        _class.save()
+
+        messages.success(request, "Class has been created Successfully.")
+        return HttpResponseRedirect(reverse("course:AdminAreaView"))
+
+
+
 
 class ManageGradeView(View):
     def post(self, request):

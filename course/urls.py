@@ -22,4 +22,5 @@ urlpatterns = [
     path('received-warnings/', views.ReceivedWarningsView.as_view(), name="ReceivedWarningsView"),
     path('class-detail-instructor/', views.InstructorCourseDetailView.as_view(), name="InstructorCourseDetailView"),
     path('manage-grade/', views.ManageGradeView.as_view(), name="ManageGradeView"),
+     path('manage-review/', views.ManageReviewView.as_view(), name="ManageReviewView"),
 ]

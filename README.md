@@ -10,3 +10,7 @@ https://docs.google.com/document/d/1DAu1bj3FWoDtEsOTPkQOJbSO8nXbTuFDSy1ARNMdvVw/
 
 https://docs.google.com/document/d/1yz6FoeKtJqNopBGAmZwHEI0rfkARW_sjMqGpyztAHmI/edit?usp=sharing
 
+`Instructions to run the project`
+
+
+

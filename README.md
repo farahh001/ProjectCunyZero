@@ -16,13 +16,18 @@ python3 -m venv env
 
 2. Activate the environment
 
-source env/bin/activate
+Windows: 
+env\Scripts\activate
+
+Mac: 
+source env/bin/activate 
 
 3. Install the following libraries(one at a time). Also mentioned in the requirements.txt file
 
-pip install django
-pip install pillow
-pip install celery
+
+python3 -m pip install Django
+python3 -m pip install --upgrade Pillow
+python pip install celery
 pip install django-crispy-forms
 pip install django-tinymce
 

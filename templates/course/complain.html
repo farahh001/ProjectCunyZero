@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block ExtraCss %}
+<style>
+    form ul{
+        list-style: none;
+    }
+</style>
+{% endblock ExtraCss %}
+
+{% block content %}
+
+<section class="container mt-5">
+    <div class="form-cont card text-center p-5">
+        <h1 class="lead fs-1">Make Complains</h1>
+        <p class="mb-5">
+            <small>Note: <strong class="text-danger">Dont make fake complains, it can be harmful for you!</strong></small>
+        </p>
+        <form action="{% url 'course:ManageComplainView' %}" method="POST" class="w-50 m-auto">
+            {% csrf_token %}
+            <input type="hidden" value="create" name="action">
+            <label for="user-select" class="form-label">Choose a Student:</label>
+            <input class="form-control" list="users-list" id="user-select" name="complained_user" placeholder="Select or leave empty"/>
+            <datalist id="users-list">
+                {% for student in students %}
+                    <option value="{{student.user.username}}">
+                {% endfor %}
+            </datalist>
+
+            <label for="instructor-select" class="form-label">Choose a Instructor:</label>
+            <input class="form-control" list="instructor-list" id="instructor-select" name="complained_instructor" placeholder="Select or leave empty"/>
+            <datalist id="instructor-list">
+                {% for instructor in instructors %}
+                    <option value="{{instructor.user.username}}">
+                {% endfor %}
+            </datalist>
+            <br>
+            <div class="form-floating mb-5">
+                <textarea class="form-control" placeholder="Leave a comment here" id="complain-message" name="complain_message" style="height: 200px"></textarea>
+                <label for="complain-message">Explain Complain</label>
+            </div>
+
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block ExtraJs %}
+
+{% endblock ExtraJs %}

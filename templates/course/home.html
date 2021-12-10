@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block ExtraCss %}
+<style>
+    #showcase{
+        background: url("{% static 'images/cuny.jpg' %}") no-repeat;
+        background-size: 100%;
+        background-position: center;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #showcase .title{
+        font-size: 5rem;
+        font-weight: bolder;
+        color: #fff;
+        text-shadow: 0px 3px 5px black;
+    }
+</style>
+{% endblock ExtraCss %}
+
+
+{% block content %}
+
+
+    <section id="showcase" class="w-100 mb-5">
+        <h1 class="title">Explore your career</h1>
+    </section>
+
+
+    <section class="top-students-section container">
+        <div class="">
+            <div class="row col mx-0 justify-content-center">
+                <div class="text-left">
+                    <h3 class="top-title">Top Ten <span>Students</span></h3>
+                </div>
+                <div class="text-center row justify-content-center">
+                    {% for student in top_students %}
+                        <div class="d-inline top-students-img " style="background-image: url({{student.get_image}});">
+                            <span class="title">
+                                {{student.user.username}}
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="my-5 container">
+        <h3 class="text-center">High Rated Classes</h3>
+        <table class="table table-striped table-dark pending-table">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Instructor</th>
+                <th scope="col">Quota</th>
+                <th scope="col">Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for class in high_rated_courses %}
+                <tr>
+                    <th scope="row">{{class.id}}</th>
+                    <td>{{class.title}}</td>
+                    <td>{{class.instructor}}</td>
+                    <td>{{class.enrolled_by.count}}/{{class.quota}}</td>
+                    <td>{{class.rating}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="my-5 container">
+        <h3 class="text-center">Low Rated Classes</h3>
+        <table class="table table-striped table-dark pending-table">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Instructor</th>
+                <th scope="col">Quota</th>
+                <th scope="col">Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for class in low_rated_courses %}
+                <tr>
+                    <th scope="row">{{class.id}}</th>
+                    <td>{{class.title}}</td>
+                    <td>{{class.instructor}}</td>
+                    <td>{{class.enrolled_by.count}}/{{class.quota}}</td>
+                    <td>{{class.rating}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+
+
+{% endblock content %}
+
+{% block ExtraJs %}
+{% endblock ExtraJs %}
